@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Page not found - Web Development</title>
-        <base href="/">
+        <title>Pinia入门 - Web Development</title>
 
 
         <!-- Custom HTML head -->
@@ -89,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="前言.html"><strong aria-hidden="true">1.</strong> 前言</a></li><li class="chapter-item expanded affix "><li class="part-title">Frontend</li><li class="chapter-item expanded "><a href="ES6新特性.html"><strong aria-hidden="true">2.</strong> ES6新特性</a></li><li class="chapter-item expanded "><a href="Vue3入门.html"><strong aria-hidden="true">3.</strong> Vue3入门</a></li><li class="chapter-item expanded "><a href="Vue-Router速成.html"><strong aria-hidden="true">4.</strong> Vue-Router速成</a></li><li class="chapter-item expanded "><a href="Axios速成.html"><strong aria-hidden="true">5.</strong> Axois速成</a></li><li class="chapter-item expanded "><a href="Pinia入门.html"><strong aria-hidden="true">6.</strong> Pinia入门</a></li><li class="chapter-item expanded affix "><li class="part-title">UI Design</li><li class="chapter-item expanded "><a href="AntDesignVue入门.html"><strong aria-hidden="true">7.</strong> AntDesignVue入门</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="前言.html"><strong aria-hidden="true">1.</strong> 前言</a></li><li class="chapter-item expanded affix "><li class="part-title">Frontend</li><li class="chapter-item expanded "><a href="ES6新特性.html"><strong aria-hidden="true">2.</strong> ES6新特性</a></li><li class="chapter-item expanded "><a href="Vue3入门.html"><strong aria-hidden="true">3.</strong> Vue3入门</a></li><li class="chapter-item expanded "><a href="Vue-Router速成.html"><strong aria-hidden="true">4.</strong> Vue-Router速成</a></li><li class="chapter-item expanded "><a href="Axios速成.html"><strong aria-hidden="true">5.</strong> Axois速成</a></li><li class="chapter-item expanded "><a href="Pinia入门.html" class="active"><strong aria-hidden="true">6.</strong> Pinia入门</a></li><li class="chapter-item expanded affix "><li class="part-title">UI Design</li><li class="chapter-item expanded "><a href="AntDesignVue入门.html"><strong aria-hidden="true">7.</strong> AntDesignVue入门</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -174,14 +173,193 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="document-not-found-404"><a class="header" href="#document-not-found-404">Document not found (404)</a></h1>
-<p>This URL is invalid, sorry. Please use the navigation bar or search to continue.</p>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="pinia-入门"><a class="header" href="#pinia-入门">Pinia 入门</a></h1>
+<ul>
+<li><a href="#71-%E6%A0%B8%E5%BF%83">7.1. 核心</a></li>
+<li><a href="#72-%E6%95%B4%E5%90%88">7.2. 整合</a></li>
+<li><a href="#73-%E6%A1%88%E4%BE%8B">7.3. 案例</a></li>
+<li><a href="#74-setup-%E5%86%99%E6%B3%95">7.4. setup 写法</a></li>
+</ul>
+<h2 id="71-核心"><a class="header" href="#71-核心">7.1. 核心</a></h2>
+<p><strong>Pinia</strong> 是 Vue 的<strong>存储库</strong>，它允许您<strong>跨组件 / 页面共享状态</strong>。</p>
+<p>Pinia 三个核心概念：</p>
+<ul>
+<li>State：表示 Pinia Store 内部保存的数据（data）</li>
+<li>Getter：可以认为是 Store 里面数据的计算属性（computed）</li>
+<li>Actions：是暴露修改数据的几种方式。</li>
+</ul>
+<p><strong>虽然外部也可以直接读写 Pinia Store 中保存的 data，但是我们建议使用 Actions 暴露的方法操作数据更加安全</strong>。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/1613913/1712928014360-66fb4f45-471c-443b-be5d-6ca43778f7fe.png" alt="" /></p>
+<h2 id="72-整合"><a class="header" href="#72-整合">7.2. 整合</a></h2>
+<pre><code>npm install pinia
+</code></pre>
+<p>main.js</p>
+<pre><code class="language-js">import { createApp } from 'vue'
+import './style.css'
+import App from './App.vue'
+import {createPinia} from 'pinia'
+
+const pinia = createPinia ();
+
+createApp (App)
+    .use (pinia)
+    .mount ('#app')
+</code></pre>
+<h2 id="73-案例"><a class="header" href="#73-案例">7.3. 案例</a></h2>
+<p><code>stores/money.js</code> 编写内容；</p>
+<pre><code class="language-js">import {defineStore} from 'pinia'
+
+// 定义一个 money 存储单元
+export const useMoneyStore = defineStore ('money', {
+    state: () =&gt; ({money: 100}),
+    getters: {
+        rmb: (state) =&gt; state.money,
+        usd: (state) =&gt; state.money * 0.14,
+        eur: (state) =&gt; state.money * 0.13,
+    },
+    actions: {
+        win (arg) {
+            this.money+=arg;
+        },
+        pay (arg){
+            this.money -= arg;
+        }
+    },
+});
+</code></pre>
+<p>App.vue</p>
+<pre><code class="language-vue">&lt;script setup&gt;
+import Wallet from "./components/Wallet.vue";
+import Game from "./components/Game.vue";
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;Wallet&gt;&lt;/Wallet&gt;
+  &lt;Game/&gt;
+
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</code></pre>
+<p>Wallet.vue</p>
+<pre><code class="language-vue">&lt;script setup&gt;
+import  {useMoneyStore} from '../stores/money.js'
+let moneyStore = useMoneyStore ();
+
+&lt;/script&gt;
+
+&lt;template&gt;
+&lt;div&gt;
+  &lt;h2&gt;￥：{{moneyStore.rmb}}&lt;/h2&gt;
+  &lt;h2&gt;$：{{moneyStore.usd}}&lt;/h2&gt;
+  &lt;h2&gt;€：{{moneyStore.eur}}&lt;/h2&gt;
+&lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+div {
+  background-color: #f9f9f9;
+}
+&lt;/style&gt;
+</code></pre>
+<p>Game.vue</p>
+<pre><code class="language-vue">&lt;script setup&gt;
+import  {useMoneyStore} from '../stores/money.js'
+
+let moneyStore = useMoneyStore ();
+function guaguale (){
+  moneyStore.win (100);
+}
+
+function bangbang (){
+  moneyStore.pay (5)
+}
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;button @click="guaguale"&gt; 刮刮乐 &lt;/button&gt;
+  &lt;button @click="bangbang"&gt; 买棒棒糖 &lt;/button&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</code></pre>
+<h2 id="74-setup-写法"><a class="header" href="#74-setup-写法">7.4. setup 写法</a></h2>
+<pre><code class="language-js">export const useMoneyStore = defineStore ('money', () =&gt; {
+    const salary = ref (1000); //ref () 就是 state 属性
+    const dollar = computed (() =&gt; salary.value * 0.14); //  computed () 就是 getters
+    const eur = computed (() =&gt; salary.value * 0.13); //computed () 就是 getters
+
+    //function () 就是 actions
+    const pay = () =&gt; {
+        salary.value -= 100;
+    }
+
+    const win = () =&gt; {
+        salary.value += 1000;
+    }
+
+    // 重要：返回可用对象
+    return {salary,dollar,eur,pay,win}
+})
+</code></pre>
+<p>完整代码：</p>
+<pre><code class="language-js">import {defineStore} from 'pinia'
+
+// 定义一个 money 存储单元
+//export const useMoneyStore = defineStore ('money', {
+//     state: () =&gt; ({money: 100}),
+//     getters: {
+//         rmb: (state) =&gt; state.money,
+//         usd: (state) =&gt; state.money * 0.14,
+//         eur: (state) =&gt; state.money * 0.13,
+//     },
+//     actions: {
+//         win (arg) {
+//             this.money+=arg;
+//         },
+//         pay (arg){
+//             this.money -= arg;
+//         }
+//     },
+// });
+export const useMoneyStore = defineStore ('money',() =&gt; {
+    const money = ref (100);
+    const rmb = computed (() =&gt; money.value);
+    const usd = computed (() =&gt; money.value * 0.14);
+    const eur = computed (() =&gt; money.value * 0.13);
+    const win = (arg) =&gt; {
+        money.value += arg;
+    };
+    const pay = (arg) =&gt; {
+        money.value -= arg;
+    };
+    return {
+        money,
+        rmb,
+        usd,
+        eur,
+        win,
+        pay
+    };
+});
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="Axios速成.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
+                            <a rel="next prefetch" href="AntDesignVue入门.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -189,7 +367,13 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="Axios速成.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
+                    <a rel="next prefetch" href="AntDesignVue入门.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>

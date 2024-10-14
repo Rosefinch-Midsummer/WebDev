@@ -1,0 +1,1081 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Vue3入门 - Web Development</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="前言.html"><strong aria-hidden="true">1.</strong> 前言</a></li><li class="chapter-item expanded affix "><li class="part-title">Frontend</li><li class="chapter-item expanded "><a href="ES6新特性.html"><strong aria-hidden="true">2.</strong> ES6新特性</a></li><li class="chapter-item expanded "><a href="Vue3入门.html" class="active"><strong aria-hidden="true">3.</strong> Vue3入门</a></li><li class="chapter-item expanded "><a href="Vue-Router速成.html"><strong aria-hidden="true">4.</strong> Vue-Router速成</a></li><li class="chapter-item expanded "><a href="Axios速成.html"><strong aria-hidden="true">5.</strong> Axois速成</a></li><li class="chapter-item expanded "><a href="Pinia入门.html"><strong aria-hidden="true">6.</strong> Pinia入门</a></li><li class="chapter-item expanded affix "><li class="part-title">UI Design</li><li class="chapter-item expanded "><a href="AntDesignVue入门.html"><strong aria-hidden="true">7.</strong> AntDesignVue入门</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Web Development</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="vue3-入门"><a class="header" href="#vue3-入门">Vue3 入门</a></h1>
+<ul>
+<li><a href="#vite-%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE">vite 创建项目</a></li>
+<li><a href="#41-%E7%BB%84%E4%BB%B6%E5%8C%96">4.1. 组件化</a></li>
+<li><a href="#42-sfc">4.2. SFC</a></li>
+<li><a href="#43-vue-%E5%B7%A5%E7%A8%8B">4.3. Vue 工程</a>
+<ul>
+<li><a href="#431-%E5%88%9B%E5%BB%BA--%E8%BF%90%E8%A1%8C">4.3.1. 创建 &amp; 运行</a></li>
+<li><a href="#432-%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86">4.3.2. 运行原理</a></li>
+</ul>
+</li>
+<li><a href="#%E5%BA%94%E7%94%A8%E5%AE%9E%E4%BE%8B-">应用实例 ​</a></li>
+<li><a href="#%E6%A0%B9%E7%BB%84%E4%BB%B6-">根组件 ​</a></li>
+<li><a href="#%E6%8C%82%E8%BD%BD%E5%BA%94%E7%94%A8-">挂载应用 ​</a>
+<ul>
+<li><a href="#dom-%E4%B8%AD%E7%9A%84%E6%A0%B9%E7%BB%84%E4%BB%B6%E6%A8%A1%E6%9D%BF-">DOM 中的根组件模板 ​</a></li>
+</ul>
+</li>
+<li><a href="#44-%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8">4.4. 基础使用</a>
+<ul>
+<li><a href="#441-%E6%8F%92%E5%80%BC">4.4.1. 插值</a></li>
+<li><a href="#442-%E6%8C%87%E4%BB%A4">4.4.2. 指令</a>
+<ul>
+<li><a href="#4421-%E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9Av-on">4.4.2.1. 事件绑定：v-on</a></li>
+<li><a href="#4422-%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%ADv-if">4.4.2.2. 条件判断：v-if</a></li>
+<li><a href="#4423-%E5%BE%AA%E7%8E%AFv-for">4.4.2.3. 循环：v-for</a></li>
+<li><a href="#4424-%E6%9B%B4%E5%A4%9A%E6%8C%87%E4%BB%A4">4.4.2.4. 更多指令</a></li>
+</ul>
+</li>
+<li><a href="#443-%E5%B1%9E%E6%80%A7%E7%BB%91%E5%AE%9A">4.4.3. 属性绑定</a></li>
+<li><a href="#444-%E5%93%8D%E5%BA%94%E5%BC%8F---ref-">4.4.4. 响应式 - ref ()</a>
+<ul>
+<li><a href="#4441-%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F">4.4.4.1. 使用方式</a></li>
+<li><a href="#4442-%E6%B7%B1%E5%B1%82%E5%93%8D%E5%BA%94%E6%80%A7">4.4.4.2. 深层响应性</a></li>
+</ul>
+</li>
+<li><a href="#445-%E5%93%8D%E5%BA%94%E5%BC%8F---reactive-">4.4.5. 响应式 - reactive ()</a></li>
+<li><a href="#446-%E8%A1%A8%E5%8D%95%E7%BB%91%E5%AE%9A">4.4.6. 表单绑定</a></li>
+<li><a href="#447-%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7---computed">4.4.7. 计算属性 - computed</a></li>
+</ul>
+</li>
+<li><a href="#45-%E8%BF%9B%E9%98%B6%E7%94%A8%E6%B3%95">4.5. 进阶用法</a>
+<ul>
+<li><a href="#451-%E7%9B%91%E5%90%AC---watchwatcheffect">4.5.1. 监听 - watch&amp;watchEffect</a></li>
+<li><a href="#452-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">4.5.2. 生命周期</a></li>
+<li><a href="#453-%E7%BB%84%E4%BB%B6%E4%BC%A0%E5%80%BC">4.5.3. 组件传值</a>
+<ul>
+<li><a href="#4531-%E7%88%B6%E4%BC%A0%E5%AD%90---props">4.5.3.1. 父传子 - Props</a></li>
+<li><a href="#4532-%E5%AD%90%E4%BC%A0%E7%88%B6---emit">4.5.3.2. 子传父 - Emit</a></li>
+</ul>
+</li>
+<li><a href="#454-%E6%8F%92%E6%A7%BD---slots">4.5.4. 插槽 - Slots</a>
+<ul>
+<li><a href="#4541-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8">4.5.4.1. 基本使用</a></li>
+<li><a href="#4542-%E9%BB%98%E8%AE%A4%E5%86%85%E5%AE%B9">4.5.4.2. 默认内容</a></li>
+<li><a href="#4543-%E5%85%B7%E5%90%8D%E6%8F%92%E6%A7%BD">4.5.4.3. 具名插槽</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#46-%E6%80%BB%E7%BB%93">4.6. 总结</a></li>
+</ul>
+<h2 id="vite-创建项目"><a class="header" href="#vite-创建项目">vite 创建项目</a></h2>
+<p>我们使用 vite 创建 vue 项目脚手架，并测试 Vue 功能</p>
+<pre><code class="language-shell">npm create vite #根据向导选择技术栈
+</code></pre>
+<h2 id="41-组件化"><a class="header" href="#41-组件化">4.1. 组件化</a></h2>
+<p>组件系统是一个抽象的概念；</p>
+<ul>
+<li>组件：小型、独立、可复用的单元</li>
+<li>组合：通过组件之间的组合、包含关系构建出一个完整应用</li>
+</ul>
+<p>几乎任意类型的应用界面都可以抽象为一个组件树；</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/1613913/1708754538888-ced4be1b-71b9-4238-9398-372985b1b99a.png?x-oss-process=image%2Fformat%2Cwebp" alt="" /></p>
+<h2 id="42-sfc"><a class="header" href="#42-sfc">4.2. SFC</a></h2>
+<p>Vue 的<strong>单文件组件</strong> (即 *.vue 文件，英文 Single-File Component，简称 <strong>SFC</strong>) 是一种特殊的文件格式，使我们能够将一个 Vue 组件的模板、逻辑与样式封装在单个文件中.</p>
+<pre><code class="language-vue">&lt;script setup&gt;
+  // 编写脚本
+&lt;/script&gt;
+
+&lt;template&gt;
+  // 编写页面模板
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+  // 编写样式
+&lt;/style&gt;
+</code></pre>
+<h2 id="43-vue-工程"><a class="header" href="#43-vue-工程">4.3. Vue 工程</a></h2>
+<h3 id="431-创建--运行"><a class="header" href="#431-创建--运行">4.3.1. 创建 &amp; 运行</a></h3>
+<pre><code>npm create vite  # 按照提示选择 Vue
+npm run dev #项目运行命令
+</code></pre>
+<h3 id="432-运行原理"><a class="header" href="#432-运行原理">4.3.2. 运行原理</a></h3>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/1613913/1712477454104-1234f405-1fdf-457c-8b84-a4cae4f4645e.png" alt="" /></p>
+<h2 id="应用实例-"><a class="header" href="#应用实例-">应用实例 <a href="https://cn.vuejs.org/guide/essentials/application.html#the-application-instance">​</a></a></h2>
+<p>每个 Vue 应用都是通过 <a href="https://cn.vuejs.org/api/application.html#createapp"><code>createApp</code></a> 函数创建一个新的 <strong>应用实例</strong>：</p>
+<pre><code class="language-js">import { createApp } from 'vue'
+
+const app = createApp ({
+  /* 根组件选项 */
+})
+</code></pre>
+<h2 id="根组件-"><a class="header" href="#根组件-">根组件 <a href="https://cn.vuejs.org/guide/essentials/application.html#the-root-component">​</a></a></h2>
+<p>我们传入 <code>createApp</code> 的对象实际上是一个组件，每个应用都需要一个 “根组件”，其他组件将作为其子组件。</p>
+<p>如果你使用的是单文件组件，我们可以直接从另一个文件中导入根组件。</p>
+<pre><code class="language-js">import { createApp } from 'vue'
+// 从一个单文件组件中导入根组件
+import App from './App.vue'
+
+const app = createApp (App)
+</code></pre>
+<p>虽然本指南中的许多示例只需要一个组件，但大多数真实的应用都是由一棵嵌套的、可重用的组件树组成的。例如，一个待办事项 (Todos) 应用的组件树可能是这样的：</p>
+<pre><code>App (root component)
+├─ TodoList
+│  └─ TodoItem
+│     ├─ TodoDeleteButton
+│     └─ TodoEditButton
+└─ TodoFooter
+   ├─ TodoClearButton
+   └─ TodoStatistics
+</code></pre>
+<p>我们会在指南的后续章节中讨论如何定义和组合多个组件。在那之前，我们得先关注一个组件内到底发生了什么。</p>
+<h2 id="挂载应用-"><a class="header" href="#挂载应用-">挂载应用 <a href="https://cn.vuejs.org/guide/essentials/application.html#mounting-the-app">​</a></a></h2>
+<p>应用实例必须在调用了 <code>.mount ()</code> 方法后才会渲染出来。该方法接收一个 “容器” 参数，可以是一个实际的 DOM 元素或是一个 CSS 选择器字符串：</p>
+<pre><code class="language-html">&lt;div id="app"&gt;&lt;/div&gt;
+</code></pre>
+<pre><code class="language-js">app.mount ('#app')
+</code></pre>
+<p>应用根组件的内容将会被渲染在容器元素里面。容器元素自己将<strong>不会</strong>被视为应用的一部分。</p>
+<p><code>.mount ()</code> 方法应该始终在整个应用配置和资源注册完成后被调用。同时请注意，不同于其他资源注册方法，它的返回值是根组件实例而非应用实例。</p>
+<h3 id="dom-中的根组件模板-"><a class="header" href="#dom-中的根组件模板-">DOM 中的根组件模板 <a href="https://cn.vuejs.org/guide/essentials/application.html#in-dom-root-component-template">​</a></a></h3>
+<p>根组件的模板通常是组件本身的一部分，但也可以直接通过在挂载容器内编写模板来单独提供：</p>
+<pre><code class="language-html">&lt;div id="app"&gt;
+  &lt;button @click="count++"&gt;{{ count }}&lt;/button&gt;
+&lt;/div&gt;
+</code></pre>
+<pre><code class="language-js">import { createApp } from 'vue'
+
+const app = createApp ({
+  data () {
+    return {
+      count: 0
+    }
+  }
+})
+
+app.mount ('#app')
+</code></pre>
+<p>当根组件没有设置 <code>template</code> 选项时，Vue 将自动使用容器的 <code>innerHTML</code> 作为模板。</p>
+<p>DOM 内模板通常用于 <a href="https://cn.vuejs.org/guide/quick-start.html#using-vue-from-cdn">无构建步骤</a> 的 Vue 应用程序。它们也可以与服务器端框架一起使用，其中根模板可能是由服务器动态生成的。</p>
+<h2 id="44-基础使用"><a class="header" href="#44-基础使用">4.4. 基础使用</a></h2>
+<h3 id="441-插值"><a class="header" href="#441-插值">4.4.1. 插值</a></h3>
+<pre><code class="language-vue">&lt;script setup&gt;
+// 基本数据
+let name = "张三"
+let age = 18
+
+// 对象数据
+let car = {
+  brand: "奔驰",
+  price: 777
+}
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;p&gt; name: {{name}} &lt;/p&gt;
+  &lt;p&gt; age: {{age}} &lt;/p&gt;
+  &lt;div style="border: 3px solid red"&gt;
+    &lt;p &gt; 品牌：{{car.brand}}&lt;/p&gt;
+    &lt;p &gt; 价格：{{car.price}}&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;vue
+</code></pre>
+<p>注意：没有 setup 则不显示 name 等属性值</p>
+<p>在 Vue 3 中，<code>&lt;script setup&gt;</code> 是一种新的语法糖，用于简化组件的编写和逻辑的组织。它可以让开发者在组件中使用函数式组件的形式编写组件逻辑，同时也能让开发者在组件中使用 Composition API 来编写逻辑。</p>
+<p>通过 <code>&lt;script setup&gt;</code> 语法，开发者可以将组件中的 props、state 和方法等都放在一个 setup 函数中进行定义，从而避免了显式地在组件中引入这些内容。这样可以使组件更加清晰简洁，并且可以更好地组织和重用逻辑代码。</p>
+<p>总的来说，<code>&lt;script setup&gt;</code> 的作用是简化组件的编写和逻辑的组织，让开发者更加方便地使用 Vue 的 Composition API 来编写逻辑。</p>
+<h3 id="442-指令"><a class="header" href="#442-指令">4.4.2. 指令</a></h3>
+<h4 id="4421-事件绑定v-on"><a class="header" href="#4421-事件绑定v-on">4.4.2.1. 事件绑定：v-on</a></h4>
+<p>使用 <code>v-on</code> 指令，可以为元素绑定事件。可以简写为 <code>@</code></p>
+<pre><code class="language-vue">&lt;script setup&gt;
+// 定义事件回调
+function buy (){
+  alert ("购买成功");
+}
+&lt;/script&gt;
+&lt;template&gt;
+  &lt;button v-on:click="buy"&gt; 购买 &lt;/button&gt;
+  &lt;button @click="buy"&gt; 购买 &lt;/button&gt;
+&lt;/template&gt;
+&lt;style scoped&gt;
+&lt;/style&gt;
+</code></pre>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/1613913/1708763498360-bc7a713e-b02a-4b17-abd9-bb1a6371bf50.png" alt="" /></p>
+<p>Modifiers：修饰符详情</p>
+<p><a href="https://cn.vuejs.org/guide/essentials/event-handling.html">https://cn.vuejs.org/guide/essentials/event-handling.html</a></p>
+<h4 id="4422-条件判断v-if"><a class="header" href="#4422-条件判断v-if">4.4.2.2. 条件判断：v-if</a></h4>
+<h4 id="4423-循环v-for"><a class="header" href="#4423-循环v-for">4.4.2.3. 循环：v-for</a></h4>
+<h4 id="4424-更多指令"><a class="header" href="#4424-更多指令">4.4.2.4. 更多指令</a></h4>
+<p><a href="https://cn.vuejs.org/api/built-in-directives.html">https://cn.vuejs.org/api/built-in-directives.html</a>；后期我们都会用到。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/1613913/1709712996927-3af836de-8e74-45b9-8757-9fb7972c1963.png" alt="" /></p>
+<h3 id="443-属性绑定"><a class="header" href="#443-属性绑定">4.4.3. 属性绑定</a></h3>
+<ul>
+<li>使用 <code>v-bind: 属性 ='xx'</code> 语法，可以为标签的某个属性绑定值；</li>
+<li>可以简写为 <code>: 属性 ='xx'</code></li>
+</ul>
+<pre><code class="language-vue">&lt;script setup&gt;
+  //
+  let url = "http://www.baidu.com"
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;a v-bind:href="url"&gt;go&lt;/a&gt;
+  &lt;a :href="url"&gt;go&lt;/a&gt;
+&lt;/template&gt;
+
+  &lt;style scoped&gt;
+
+&lt;/style&gt;
+</code></pre>
+<p>注意：此时如果我们想修改变量的值，属性值并不会跟着修改。可以测试下。因为 v-bind 默认设置还没有响应式特性</p>
+<h3 id="444-响应式---ref-"><a class="header" href="#444-响应式---ref-">4.4.4. 响应式 - ref ()</a></h3>
+<p>数据的动态变化需要反馈到页面；</p>
+<p>Vue 通过 <code>ref ()</code> 和 <code>reactive ()</code> 包装数据，将会生成一个数据的代理对象。vue 内部的 <strong>基于依赖追踪的响应式系统</strong> 就会<strong>追踪</strong>感知<strong>数据变化</strong>，并<strong>触发页面</strong>的重新<strong>渲染</strong>。</p>
+<h4 id="4441-使用方式"><a class="header" href="#4441-使用方式">4.4.4.1. 使用方式</a></h4>
+<p>使用步骤：</p>
+<ol>
+<li>使用 <strong>ref ()</strong> 包装<strong>原始类型、对象类型数据</strong>，生成 <strong>代理对象</strong></li>
+<li><strong>任何方法、js 代码中</strong>，使用 <code>代理对象.value</code> 的形式读取和修改值</li>
+<li><strong>页面组件中</strong>，直接使用 <code>代理对象</code></li>
+</ol>
+<p>_<strong>注意：</strong>_<em>推荐使用 const（常量） 声明代理对象。代表代理对象不可变，但是内部值变化会被追踪。</em></p>
+<pre><code class="language-js">&lt;script setup&gt;
+import { ref } from 'vue'
+
+const count = ref (0)
+
+function increment () {
+  count.value++
+}
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;button @click="increment"&gt;
+    {{ count }}
+  &lt;/button&gt;
+&lt;/template&gt;
+</code></pre>
+<h4 id="4442-深层响应性"><a class="header" href="#4442-深层响应性">4.4.4.2. 深层响应性</a></h4>
+<pre><code class="language-js">import { ref } from 'vue'
+
+const obj = ref ({
+  nested: { count: 0 },
+  arr: ['foo', 'bar']
+})
+
+function mutateDeeply () {
+  // 以下都会按照期望工作
+  obj.value.nested.count++
+  obj.value.arr.push ('baz')
+}
+</code></pre>
+<h3 id="445-响应式---reactive-"><a class="header" href="#445-响应式---reactive-">4.4.5. 响应式 - reactive ()</a></h3>
+<p>使用步骤：</p>
+<ol>
+<li>使用 <strong>reactive ()</strong> 包装<strong>对象类型数据</strong>，生成 <strong>代理对象</strong></li>
+<li><strong>任何方法、js 代码中</strong>，使用 <code>代理对象。属性</code> 的形式读取和修改值</li>
+<li><strong>页面组件中</strong>，直接使用 <code>代理对象。属性</code></li>
+</ol>
+<pre><code class="language-vue">import { reactive } from 'vue'
+
+const state = reactive ({ count: 0 })
+
+&lt;button @click="state.count++"&gt;
+{{ state.count }}
+&lt;/button&gt;
+</code></pre>
+<p>注意：可以修改 const 变量的内容</p>
+<p>基本类型用 ref ()，对象类型用 reactive ()，<code>ref 要用 .value</code>，<code>reactive 直接 .</code> 。页面取值永不变。</p>
+<p>也可以 ref 一把梭，大不了天天 .value</p>
+<pre><code class="language-vue">&lt;script setup&gt;
+
+import { reactive, ref } from 'vue';
+
+//let name = 'Base2'
+let name = "张三"
+let age = 18
+let car = reactive ({ brand: 'BMW', model: 'X5', price: 400 })
+let message = '&lt;p style="color:red"&gt;Hello Vue3&lt;/p&gt;'
+function changeName () {
+    name = "李四"
+    alert ('changeName')
+}
+
+let fruits = ['apple', 'banana', 'orange']
+
+let url = ref ('https://www.baidu.com')
+
+function changeUrl () {
+    url.value = 'https://www.google.com'
+}
+
+function addPrice () {
+    car.price += 100
+}
+
+&lt;/script&gt;
+&lt;template&gt;
+
+    &lt;!-- &lt;a :href="url" :abc="url"&gt; 百度 &lt;/a&gt;&lt;br&gt; --&gt;
+    &lt;a v-bind:href="url"&gt;GO {{ url }}&lt;/a&gt;
+    &lt;button @click="changeUrl"&gt;Change Url&lt;/button&gt;
+
+    &lt;h1&gt;Hello {{ name }}&lt;/h1&gt;
+    &lt;p&gt; {{ age }} component &lt;/p&gt;
+    &lt;p&gt; {{ car.brand }} {{ car.model }} &lt;/p&gt;
+
+    &lt;p &gt; 价格：{{ car.price }}&lt;/p&gt;
+
+    &lt;button @click="addPrice"&gt; 加价 &lt;/button&gt;
+
+    &lt;div v-html="message"&gt;&lt;/div&gt;
+    &lt;div&gt;{{ message }}&lt;/div&gt;
+    &lt;div v-text="message"&gt;&lt;/div&gt;
+
+
+    &lt;!-- &lt;button @click="changeName"&gt;Change Name&lt;/button&gt; --&gt;
+    &lt;button v-on:click.once="changeName"&gt;Change Name&lt;/button&gt;
+
+    &lt;p style="color:blue" v-if="car.price &lt; 1000"&gt; 很便宜 &lt;/p&gt;
+
+    &lt;p style="color: red;" v-else &gt; 太贵了 &lt;/p&gt;
+
+    &lt;ul&gt;
+        &lt;li v-for="(fruit, index) in fruits" :key="index"&gt;{{ fruit }}&lt;/li&gt;
+    &lt;/ul&gt;
+
+&lt;/template&gt;
+&lt;style&gt;&lt;/style&gt;
+</code></pre>
+<h3 id="446-表单绑定"><a class="header" href="#446-表单绑定">4.4.6. 表单绑定</a></h3>
+<pre><code>//2. 指令：v-XXX：
+// 基础指令：v-html、v-text
+// 事件指令：v-on
+// 判断指令：v-if
+// 循环指令：v-for
+/ 属性绑定：v-bind; 单向绑定，数据 -&gt; 页面
+// 表单绑定：v-model; 双向绑定，数据 &lt;--&gt; 页面
+</code></pre>
+<p>复制如下模板到组件，编写你的代码，实现表单数据绑定。</p>
+<pre><code class="language-js">&lt;div style="display: flex;"&gt;
+  &lt;div style="border: 1px solid black;width: 300px"&gt;
+    &lt;form&gt;
+      &lt;h1 &gt; 表单绑定 &lt;/h1&gt;
+      &lt;p style="background-color: azure"&gt;&lt;label &gt; 姓名 (文本框)：&lt;/label&gt;&lt;input/&gt;&lt;/p&gt;
+      &lt;p style="background-color: azure"&gt;&lt;label &gt; 同意协议 (checkbox)：&lt;/label&gt;
+        &lt;input type="checkbox"/&gt;
+      &lt;/p&gt;
+      &lt;p style="background-color: azure"&gt;
+        &lt;label &gt; 兴趣 (多选框)：&lt;/label&gt;&lt;br/&gt;
+        &lt;label&gt;&lt;input type="checkbox" value="足球"/&gt; 足球 &lt;/label&gt;
+        &lt;label&gt;&lt;input type="checkbox" value="篮球"/&gt; 篮球 &lt;/label&gt;
+        &lt;label&gt;&lt;input type="checkbox" value="羽毛球"/&gt; 羽毛球 &lt;/label&gt;
+        &lt;label&gt;&lt;input type="checkbox" value="乒乓球"/&gt; 乒乓球 &lt;/label&gt;
+      &lt;/p&gt;
+      &lt;p style="background-color: azure"&gt;
+        &lt;label &gt; 性别 (单选框)：&lt;/label&gt;
+        &lt;label&gt;&lt;input type="radio" name="sex" value="男"&gt; 男 &lt;/label&gt;
+        &lt;label&gt;&lt;input type="radio" name="sex" value="女"&gt; 女 &lt;/label&gt;
+      &lt;/p&gt;
+      &lt;p style="background-color: azure"&gt;
+        &lt;label &gt; 学历 (单选下拉列表)：&lt;/label&gt;
+        &lt;select&gt;
+          &lt;option disabled value=""&gt; 选择学历 &lt;/option&gt;
+          &lt;option &gt; 小学 &lt;/option&gt;
+          &lt;option &gt; 初中 &lt;/option&gt;
+          &lt;option &gt; 高中 &lt;/option&gt;
+          &lt;option &gt; 大学 &lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/p&gt;
+      &lt;p style="background-color: azure"&gt;
+        &lt;label &gt; 课程 (多选下拉列表)：&lt;/label&gt;
+        &lt;br/&gt;
+        &lt;select multiple&gt;
+          &lt;option disabled value=""&gt; 选择课程 &lt;/option&gt;
+          &lt;option &gt; 语文 &lt;/option&gt;
+          &lt;option &gt; 数学 &lt;/option&gt;
+          &lt;option &gt; 英语 &lt;/option&gt;
+          &lt;option &gt; 道法 &lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/p&gt;
+    &lt;/form&gt;
+  &lt;/div&gt;
+  &lt;div style="border: 1px solid blue;width: 200px"&gt;
+    &lt;h1 &gt; 结果预览 &lt;/h1&gt;
+    &lt;p style="background-color: azure"&gt;&lt;label &gt; 姓名：&lt;/label&gt;&lt;/p&gt;
+    &lt;p style="background-color: azure"&gt;&lt;label &gt; 同意协议：&lt;/label&gt;
+    &lt;/p&gt;
+    &lt;p style="background-color: azure"&gt;
+      &lt;label &gt; 兴趣：&lt;/label&gt;
+    &lt;/p&gt;
+    &lt;p style="background-color: azure"&gt;
+      &lt;label &gt; 性别：&lt;/label&gt;
+    &lt;/p&gt;
+    &lt;p style="background-color: azure"&gt;
+      &lt;label &gt; 学历：&lt;/label&gt;
+    &lt;/p&gt;
+    &lt;p style="background-color: azure"&gt;
+      &lt;label &gt; 课程：&lt;/label&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<p>完整代码如下所示：</p>
+<pre><code class="language-vue">&lt;script setup&gt;
+
+import { reactive, ref } from 'vue';
+
+const data = reactive ({
+    name: '',
+    agree: false,
+    hobby: [],
+    sex: '',
+    education: '',
+    course: []
+});
+
+&lt;/script&gt;
+&lt;template&gt;
+
+&lt;div style="display: flex;"&gt;
+  &lt;div style="border: 1px solid black;width: 300px"&gt;
+    &lt;form&gt;
+      &lt;h1 &gt; 表单绑定 &lt;/h1&gt;
+      &lt;p style="background-color: azure"&gt;&lt;label &gt; 姓名 (文本框)：&lt;/label&gt;&lt;input v-model="data.name"/&gt;&lt;/p&gt;
+      &lt;p style="background-color: azure"&gt;&lt;label &gt; 同意协议 (checkbox)：&lt;/label&gt;
+        &lt;input type="checkbox" v-model="data.agree"/&gt;
+      &lt;/p&gt;
+      &lt;p style="background-color: azure"&gt;
+        &lt;label &gt; 兴趣 (多选框)：&lt;/label&gt;&lt;br/&gt;
+        &lt;label&gt;&lt;input type="checkbox" value="足球" v-model="data.hobby"/&gt; 足球 &lt;/label&gt;
+        &lt;label&gt;&lt;input type="checkbox" value="篮球" v-model="data.hobby"/&gt; 篮球 &lt;/label&gt;
+        &lt;label&gt;&lt;input type="checkbox" value="乒乓球" v-model="data.hobby"/&gt; 乒乓球 &lt;/label&gt;
+      &lt;/p&gt;
+      &lt;p style="background-color: azure"&gt;
+        &lt;label &gt; 性别 (单选框)：&lt;/label&gt;
+        &lt;label&gt;&lt;input type="radio" name="sex" value="男" v-model="data.sex"&gt; 男 &lt;/label&gt;
+        &lt;label&gt;&lt;input type="radio" name="sex" value="女" v-model="data.sex"&gt; 女 &lt;/label&gt;
+      &lt;/p&gt;
+      &lt;p style="background-color: azure"&gt;
+        &lt;label &gt; 学历 (单选下拉列表)：&lt;/label&gt;
+        &lt;select v-model="data.education"&gt;
+          &lt;option disabled value=""&gt; 选择学历 &lt;/option&gt;
+          &lt;option &gt; 小学 &lt;/option&gt;
+          &lt;option &gt; 初中 &lt;/option&gt;
+          &lt;option &gt; 高中 &lt;/option&gt;
+          &lt;option &gt; 大学 &lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/p&gt;
+      &lt;p style="background-color: azure"&gt;
+        &lt;label &gt; 课程 (多选下拉列表)：&lt;/label&gt;
+        &lt;br/&gt;
+        &lt;select multiple v-model="data.course"&gt;
+          &lt;option disabled value=""&gt; 选择课程 &lt;/option&gt;
+          &lt;option &gt; 语文 &lt;/option&gt;
+          &lt;option &gt; 数学 &lt;/option&gt;
+          &lt;option &gt; 英语 &lt;/option&gt;
+          &lt;option &gt; 道法 &lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/p&gt;
+    &lt;/form&gt;
+  &lt;/div&gt;
+  &lt;div style="border: 1px solid blue;width: 200px"&gt;
+    &lt;h1 &gt; 结果预览 &lt;/h1&gt;
+    &lt;p style="background-color: azure"&gt;&lt;label &gt; 姓名：{{ data.name }}&lt;/label&gt;&lt;/p&gt;
+    &lt;p style="background-color: azure"&gt;&lt;label &gt; 同意协议：{{ data.agree }}&lt;/label&gt;
+    &lt;/p&gt;
+    &lt;p style="background-color: azure"&gt;
+      &lt;label &gt; 兴趣：{{ data.hobby }}&lt;/label&gt;
+    &lt;/p&gt;
+    &lt;p style="background-color: azure"&gt;
+      &lt;label &gt; 性别：{{ data.sex }}&lt;/label&gt;
+    &lt;/p&gt;
+    &lt;p style="background-color: azure"&gt;
+      &lt;label &gt; 学历：{{ data.education }}&lt;/label&gt;
+    &lt;/p&gt;
+    &lt;p style="background-color: azure"&gt;
+      &lt;label &gt; 课程：{{ data.course }}&lt;/label&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/template&gt;
+&lt;style&gt;&lt;/style&gt;
+</code></pre>
+<h3 id="447-计算属性---computed"><a class="header" href="#447-计算属性---computed">4.4.7. 计算属性 - computed</a></h3>
+<p>计算属性：根据已有数据计算出新数据</p>
+<pre><code class="language-vue">&lt;script setup&gt;
+import { ref, computed } from "vue";
+
+// 省略基础代码
+
+const car = ref ({
+    brand: "奔驰",
+    num: 1,
+    price: 100
+})
+
+const totalPrice = computed (() =&gt; {
+    return car.value.price * car.value.num
+})
+
+&lt;/script&gt;
+
+&lt;template&gt;
+    &lt;h2 &gt; 基础信息 &lt;/h2&gt;
+    &lt;h2 &gt; 品牌：{{ car.brand }}&lt;/h2&gt;
+    &lt;h2 &gt; 数量：{{ car.num }}&lt;/h2&gt;
+    &lt;h2 &gt; 单价：{{ car.price }}&lt;/h2&gt;
+    &lt;h1 &gt; 总价：{{ totalPrice }}&lt;/h1&gt;
+    &lt;button @click="car.num++"&gt; 加量 &lt;/button&gt;
+    &lt;button @click="car.price++"&gt; 加价 &lt;/button&gt;
+
+&lt;/template&gt;
+
+&lt;style scoped&gt;&lt;/style&gt;
+</code></pre>
+<h2 id="45-进阶用法"><a class="header" href="#45-进阶用法">4.5. 进阶用法</a></h2>
+<h3 id="451-监听---watchwatcheffect"><a class="header" href="#451-监听---watchwatcheffect">4.5.1. 监听 - watch&amp;watchEffect</a></h3>
+<pre><code class="language-js">watch (num, (value, oldValue, onCleanup) =&gt; {
+  console.log ("newValue：" + value + "；oldValue:" + oldValue)
+  onCleanup (() =&gt; {
+    console.log ("onCleanup....")
+  })
+})
+</code></pre>
+<pre><code class="language-vue">&lt;script setup&gt;
+import { ref, computed, watch } from "vue";
+
+// 省略基础代码
+
+const car = ref ({
+    brand: "奔驰",
+    num: 1,
+    price: 100
+})
+
+const totalPrice = computed (() =&gt; {
+    return car.value.price * car.value.num
+})
+watch (() =&gt; car.value.num, (value, oldValue) =&gt; {  
+    console.log ("value:", value, "oldValue:", oldValue)  
+    if (car.value.num &gt; 3) {  
+        alert ("数量不能超过 3")  
+        car.value.num = 3  
+    }  
+})
+//watch (() =&gt; car.value.num, (value, oldValue) =&gt; {
+//     console.log ("value:", value, "oldValue:", oldValue)
+//     if (car.num.value &gt; 3) {
+//         alert ("数量不能超过 3")
+//         car.num.value = 3
+//     }
+// })
+
+&lt;/script&gt;
+
+&lt;template&gt;
+    &lt;h2 &gt; 基础信息 &lt;/h2&gt;
+    &lt;h2 &gt; 品牌：{{ car.brand }}&lt;/h2&gt;
+    &lt;h2 &gt; 数量：{{ car.num }}&lt;/h2&gt;
+    &lt;h2 &gt; 单价：{{ car.price }}&lt;/h2&gt;
+    &lt;h1 &gt; 总价：{{ totalPrice }}&lt;/h1&gt;
+    &lt;button @click="car.num++"&gt; 加量 &lt;/button&gt;
+    &lt;button @click="car.price++"&gt; 加价 &lt;/button&gt;
+
+&lt;/template&gt;
+
+&lt;style scoped&gt;&lt;/style&gt;
+</code></pre>
+<p>这两个 watch 函数的区别在于监听的属性不同。</p>
+<p>第一个 watch 函数中的监听属性是 <code>car.value.num</code>，而第二个 watch 函数中的监听属性是 <code>car.num.value</code>。</p>
+<p>在 Vue3 的 Composition API 中，<code>ref</code> 创建的响应式对象可以直接通过 <code>.value</code> 访问其值，而使用 <code>computed</code> 等函数创建的响应式对象则不能直接访问其值，需要通过 <code>.value</code> 来获取。因此，正确的监听属性应该是 <code>car.value.num</code>。</p>
+<p>watchEffect 函数监听所有响应式数据</p>
+<pre><code class="language-vue">&lt;script setup&gt;
+import { ref, computed, watch, watchEffect } from "vue";
+
+// 省略基础代码
+
+const car = ref ({
+    brand: "奔驰",
+    num: 1,
+    price: 100
+})
+
+const totalPrice = computed (() =&gt; {
+    return car.value.price * car.value.num
+})
+
+watchEffect (() =&gt; {
+    if (car.value.num &gt; 3){
+        alert ("数量不能超过 3")
+        car.value.num = 3
+    }
+    if (car.value.price &gt; 10000){
+        alert ("单价不能超过 10000")
+        car.value.price = 10000
+    }
+})
+
+&lt;/script&gt;
+
+&lt;template&gt;
+    &lt;h2 &gt; 基础信息 &lt;/h2&gt;
+    &lt;h2 &gt; 品牌：{{ car.brand }}&lt;/h2&gt;
+    &lt;h2 &gt; 数量：{{ car.num }}&lt;/h2&gt;
+    &lt;h2 &gt; 单价：{{ car.price }}&lt;/h2&gt;
+    &lt;h1 &gt; 总价：{{ totalPrice }}&lt;/h1&gt;
+    &lt;button @click="car.num++"&gt; 加量 &lt;/button&gt;
+    &lt;button @click="car.price++"&gt; 加价 &lt;/button&gt;
+
+&lt;/template&gt;
+
+&lt;style scoped&gt;&lt;/style&gt;
+</code></pre>
+<h3 id="452-生命周期"><a class="header" href="#452-生命周期">4.5.2. 生命周期</a></h3>
+<p>每个 Vue 组件实例在创建时都需要经历一系列的初始化步骤，比如设置好数据侦听，编译模板，挂载实例到 DOM，以及在数据改变时更新 DOM。在此过程中，它也会运行被称为生命周期钩子的函数，让开发者有机会在特定阶段运行自己的代码。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/1613913/1712714322676-1b2be398-47b7-4901-ab8d-f5dff873a8ab.png" alt="" /></p>
+<p>生命周期整体分为四个阶段，分别是：<code>创建、挂载、更新、销毁</code>，每个阶段都有两个钩子，一前一后。</p>
+<p>常用的钩子：</p>
+<ul>
+<li><strong>onMounted (挂载完毕)</strong></li>
+<li><strong>onUpdated (更新完毕)</strong></li>
+<li><strong>onBeforeUnmount (卸载之前)</strong></li>
+</ul>
+<pre><code class="language-vue">&lt;script setup&gt;
+import {onBeforeMount, onBeforeUpdate, onMounted, onUpdated, ref} from "vue";
+const  count = ref (0)
+const btn01 = ref ()
+
+// 生命周期钩子
+onBeforeMount (()=&gt;{
+  console.log (' 挂载之前 ',count.value,document.getElementById ("btn01"))
+})
+onMounted (()=&gt;{
+  console.log (' 挂载完毕 ',count.value,document.getElementById ("btn01"))
+})
+onBeforeUpdate (()=&gt;{
+  console.log (' 更新之前 ',count.value,btn01.value.innerHTML)
+})
+onUpdated (()=&gt;{
+  console.log (' 更新完毕 ',count.value,btn01.value.innerHTML)
+})
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;button ref="btn01" @click="count++"&gt; {{count}} &lt;/button&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+&lt;/style&gt;
+</code></pre>
+<p>输出结果：</p>
+<pre><code>baked beans
+Life.vue:8 挂载之前 0 null
+Life.vue:11 挂载完毕 0 null
+Life.vue:14 更新之前 1 0
+Life.vue:17 更新完毕 1 1
+</code></pre>
+<p>更新前内容未变，数据变了</p>
+<h3 id="453-组件传值"><a class="header" href="#453-组件传值">4.5.3. 组件传值</a></h3>
+<h4 id="4531-父传子---props"><a class="header" href="#4531-父传子---props">4.5.3.1. 父传子 - Props</a></h4>
+<p><strong><em>父组件给子组件传递值；</em></strong></p>
+<pre><code class="language-vue">&lt;script setup&gt;
+import { ref, reactive } from 'vue';
+import Son from './Son.vue'
+
+let money = ref (1000)
+
+const data = reactive ({
+    money: money,
+    name: 'Father',
+    age: 30,
+    hobby: 'coding'
+})
+
+&lt;/script&gt;
+
+&lt;template&gt;
+    &lt;div&gt;Father&lt;/div&gt;
+    &lt;Son v-bind="data" /&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;&lt;/style&gt;
+</code></pre>
+<pre><code class="language-vue">&lt;script setup&gt;
+
+let props = defineProps (['money', "name", "hobby"]);
+
+&lt;/script&gt;
+
+&lt;template&gt;
+    &lt;div&gt;Son 组件 &lt;/div&gt;
+    &lt;p style="color: aqua;"&gt; 父组件传递的 money 值：{{ props.money }}&lt;/p&gt;
+    &lt;p style="color: aqua;"&gt; 父组件传递的 name 值：{{ props.name }}&lt;/p&gt;
+    &lt;p style="color: aqua;"&gt; 父组件传递的 hobby 值：{{ props.hobby }}&lt;/p&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;&lt;/style&gt;
+</code></pre>
+<p><strong>单向数据流</strong>效果：</p>
+<ul>
+<li>父组件修改值，子组件发生变化</li>
+<li>子组件修改值，父组件不会感知到</li>
+</ul>
+<pre><code class="language-vue">// 父组件给子组件传递数据：使用属性绑定
+&lt;Son :books="data.books" :money="data.money"/&gt;
+  
+// 子组件定义接受父组件的属性
+let props = defineProps ({
+  money: {
+    type: Number,
+    required: true,
+    default: 200
+  },
+  books: Array
+});
+</code></pre>
+<h4 id="4532-子传父---emit"><a class="header" href="#4532-子传父---emit">4.5.3.2. 子传父 - Emit</a></h4>
+<p>props 用来父传子，emit 用来子传父</p>
+<pre><code class="language-vue">// 子组件定义发生的事件
+let emits = defineEmits (['buy']);
+function buy (){
+  //props.money -= 5;
+  emits ('buy',-5);
+}
+
+// 父组件感知事件和接受事件值
+  &lt;Son :books="data.books" :money="data.money"
+       @buy="moneyMinis"/&gt;
+</code></pre>
+<pre><code class="language-js">&lt;script setup&gt;
+import { ref, reactive } from 'vue';
+import Son from './Son.vue'
+
+let money = ref (1000)
+
+const data = reactive ({
+    money: money,
+    name: 'Father',
+    age: 30,
+    hobby: 'coding'
+})
+
+function addMoney () {
+    money.value += 100
+}
+
+function minusMoney (arg) {
+    money.value += arg
+}
+
+&lt;/script&gt;
+
+&lt;template&gt;
+    &lt;div&gt;Father&lt;/div&gt;
+    &lt;div&gt;Money: {{ money }}&lt;/div&gt;
+    &lt;button @click="addMoney"&gt;Add Money&lt;/button&gt;
+    &lt;div &gt;&lt;Son v-bind="data" style="color: red;" @buy="minusMoney" /&gt;&lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;&lt;/style&gt;
+</code></pre>
+<pre><code class="language-js">&lt;script setup&gt;
+
+let props = defineProps (['money', "name", "hobby"]);
+let emits = defineEmits (['buy']);
+function buy () {
+    //props.money -= 5;
+    emits ('buy', -5);
+}
+
+
+&lt;/script&gt;
+
+&lt;template&gt;
+    &lt;div&gt;
+        &lt;p style="color: aqua;"&gt; 父组件传递的 money 值：{{ props.money }}&lt;/p&gt;
+        &lt;button @click="buy"&gt; 购买 &lt;/button&gt;
+
+        &lt;p style="color: aqua;"&gt; 父组件传递的 name 值：{{ props.name }}&lt;/p&gt;
+        &lt;p style="color: aqua;"&gt; 父组件传递的 hobby 值：{{ props.hobby }}&lt;/p&gt;
+    &lt;/div&gt;
+
+&lt;/template&gt;
+
+&lt;style scoped&gt;&lt;/style&gt;
+</code></pre>
+<p>思考：兄弟组件如何传值？</p>
+<p>利用父子传值即可</p>
+<h3 id="454-插槽---slots"><a class="header" href="#454-插槽---slots">4.5.4. 插槽 - Slots</a></h3>
+<p>子组件可以使用插槽接受模板内容。</p>
+<h4 id="4541-基本使用"><a class="header" href="#4541-基本使用">4.5.4.1. 基本使用</a></h4>
+<pre><code class="language-js">&lt;!-- 组件定义 --&gt;
+&lt;button class="fancy-btn"&gt;
+  &lt;slot&gt;&lt;/slot&gt; &lt;!-- 插槽出口 --&gt;
+&lt;/button&gt;
+
+&lt;!-- 组件使用 --&gt;
+&lt;FancyButton&gt;
+  Click me! &lt;!-- 插槽内容 --&gt;
+&lt;/FancyButton&gt;
+</code></pre>
+<h4 id="4542-默认内容"><a class="header" href="#4542-默认内容">4.5.4.2. 默认内容</a></h4>
+<pre><code class="language-js">&lt;button type="submit"&gt;
+  &lt;slot&gt;
+    Submit &lt;!-- 默认内容 --&gt;
+  &lt;/slot&gt;
+&lt;/button&gt;
+</code></pre>
+<h4 id="4543-具名插槽"><a class="header" href="#4543-具名插槽">4.5.4.3. 具名插槽</a></h4>
+<pre><code class="language-js">&lt;div class="container"&gt;
+  &lt;header&gt;
+    &lt;slot name="header"&gt;&lt;/slot&gt;
+  &lt;/header&gt;
+  &lt;main&gt;
+    &lt;slot&gt;&lt;/slot&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;
+    &lt;slot name="footer"&gt;&lt;/slot&gt;
+  &lt;/footer&gt;
+&lt;/div&gt;
+</code></pre>
+<p>使用： <code>v-slot</code> 可以简写为 <code>#</code></p>
+<pre><code class="language-js">&lt;BaseLayout&gt;
+  &lt;template v-slot:header&gt;
+    &lt;!-- header 插槽的内容放这里 --&gt;
+  &lt;/template&gt;
+&lt;/BaseLayout&gt;
+</code></pre>
+<h2 id="46-总结"><a class="header" href="#46-总结">4.6. 总结</a></h2>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/1613913/1712737404128-2d94429f-b301-408e-ac3a-88e175b1d45f.png" alt="" /></p>
+<p>几个简写：</p>
+<ul>
+<li><code>v-on</code>=<code>@</code></li>
+<li><code>v-bind</code>= <code>:</code></li>
+<li><code>v-slot</code>= <code>#</code></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="ES6新特性.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="Vue-Router速成.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="ES6新特性.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="Vue-Router速成.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

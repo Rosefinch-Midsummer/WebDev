@@ -1,0 +1,713 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Axois速成 - Web Development</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="前言.html"><strong aria-hidden="true">1.</strong> 前言</a></li><li class="chapter-item expanded affix "><li class="part-title">Frontend</li><li class="chapter-item expanded "><a href="ES6新特性.html"><strong aria-hidden="true">2.</strong> ES6新特性</a></li><li class="chapter-item expanded "><a href="Vue3入门.html"><strong aria-hidden="true">3.</strong> Vue3入门</a></li><li class="chapter-item expanded "><a href="Vue-Router速成.html"><strong aria-hidden="true">4.</strong> Vue-Router速成</a></li><li class="chapter-item expanded "><a href="Axios速成.html" class="active"><strong aria-hidden="true">5.</strong> Axois速成</a></li><li class="chapter-item expanded "><a href="Pinia入门.html"><strong aria-hidden="true">6.</strong> Pinia入门</a></li><li class="chapter-item expanded affix "><li class="part-title">UI Design</li><li class="chapter-item expanded "><a href="AntDesignVue入门.html"><strong aria-hidden="true">7.</strong> AntDesignVue入门</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Web Development</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="axios-速成"><a class="header" href="#axios-速成">Axios 速成</a></h1>
+<ul>
+<li><a href="#61-%E7%AE%80%E4%BB%8B">6.1. 简介</a></li>
+<li><a href="#62-%E8%AF%B7%E6%B1%82">6.2. 请求</a>
+<ul>
+<li><a href="#621-get-%E8%AF%B7%E6%B1%82">6.2.1. get 请求</a></li>
+<li><a href="#622-post-%E8%AF%B7%E6%B1%82">6.2.2. post 请求</a></li>
+</ul>
+</li>
+<li><a href="#63-%E5%93%8D%E5%BA%94">6.3. 响应</a></li>
+<li><a href="#64-%E9%85%8D%E7%BD%AE">6.4. 配置</a></li>
+<li><a href="#65-%E6%8B%A6%E6%88%AA%E5%99%A8">6.5. 拦截器</a></li>
+<li><a href="#%E5%AE%9E%E6%88%98">实战</a></li>
+</ul>
+<h2 id="61-简介"><a class="header" href="#61-简介">6.1. 简介</a></h2>
+<p>Axios 是一个基于 promise 的网络请求库，可以用于浏览器和 node.js</p>
+<pre><code>npm install axios
+</code></pre>
+<pre><code class="language-js">import axios from "axios"
+axios.get ('/user')
+     .then (res =&gt; console.log (resp.data))
+</code></pre>
+<p>API 测试服务器： <a href="http://43.139.239.29/">http://43.139.239.29/</a></p>
+<h2 id="62-请求"><a class="header" href="#62-请求">6.2. 请求</a></h2>
+<h3 id="621-get-请求"><a class="header" href="#621-get-请求">6.2.1. get 请求</a></h3>
+<pre><code class="language-js">// 向给定 ID 的用户发起请求
+axios.get ('/user?ID=12345')
+  .then (function (response) {
+    // 处理成功情况
+    console.log (response);
+  })
+  .catch (function (error) {
+    // 处理错误情况
+    console.log (error);
+  })
+  .finally (function () {
+    // 总是会执行
+  });
+</code></pre>
+<p>携带请求参数</p>
+<pre><code class="language-js">// 上述请求也可以按以下方式完成（可选）
+axios.get ('/user', {
+    params: {
+      ID: 12345
+    }
+  })
+  .then (function (response) {
+    console.log (response);
+  })
+  .catch (function (error) {
+    console.log (error);
+  })
+  .finally (function () {
+    // 总是会执行
+  });  
+</code></pre>
+<h3 id="622-post-请求"><a class="header" href="#622-post-请求">6.2.2. post 请求</a></h3>
+<p>默认 <code>post 请求体</code> 中的数据将会以 <code>json</code> 方式提交</p>
+<pre><code class="language-js">axios.post ('/user', {
+  firstName: 'Fred',
+  lastName: 'Flintstone'
+})
+.then (function (response) {
+  console.log (response);
+})
+.catch (function (error) {
+  console.log (error);
+});
+</code></pre>
+<h2 id="63-响应"><a class="header" href="#63-响应">6.3. 响应</a></h2>
+<p>响应的数据结构如下：</p>
+<pre><code class="language-js">{
+  // `data` 由服务器提供的响应
+  data: {},
+
+  // `status` 来自服务器响应的 HTTP 状态码
+  status: 200,
+  
+  // `statusText` 来自服务器响应的 HTTP 状态信息
+  statusText: 'OK',
+
+  // `headers` 是服务器响应头
+  // 所有的 header 名称都是小写，而且可以使用方括号语法访问
+  // 例如: `response.headers ['content-type']`
+  headers: {},
+
+  // `config` 是 `axios` 请求的配置信息
+  config: {},
+
+  // `request` 是生成此响应的请求
+  // 在 node.js 中它是最后一个 ClientRequest 实例 (in redirects)，
+  // 在浏览器中则是 XMLHttpRequest 实例
+  request: {}
+}
+</code></pre>
+<h2 id="64-配置"><a class="header" href="#64-配置">6.4. 配置</a></h2>
+<pre><code class="language-js">const instance = axios.create ({
+  baseURL: 'https://some-domain.com/api/',
+  timeout: 1000,
+  headers: {'X-Custom-Header': 'foobar'}
+});
+
+// 可用的配置项如下：
+{
+  // `url` 是用于请求的服务器 URL
+  url: '/user',
+
+  // `method` 是创建请求时使用的方法
+  method: 'get', // 默认值
+
+  // `baseURL` 将自动加在 `url` 前面，除非 `url` 是一个绝对 URL。
+  // 它可以通过设置一个 `baseURL` 便于为 axios 实例的方法传递相对 URL
+  baseURL: 'https://some-domain.com/api/',
+
+  // `transformRequest` 允许在向服务器发送前，修改请求数据
+  // 它只能用于 'PUT', 'POST' 和 'PATCH' 这几个请求方法
+  // 数组中最后一个函数必须返回一个字符串， 一个 Buffer 实例，ArrayBuffer，FormData，或 Stream
+  // 你可以修改请求头。
+  transformRequest: [function (data, headers) {
+    // 对发送的 data 进行任意转换处理
+
+    return data;
+  }],
+
+  // `transformResponse` 在传递给 then/catch 前，允许修改响应数据
+  transformResponse: [function (data) {
+    // 对接收的 data 进行任意转换处理
+
+    return data;
+  }],
+
+  // 自定义请求头
+  headers: {'X-Requested-With': 'XMLHttpRequest'},
+
+  // `params` 是与请求一起发送的 URL 参数
+  // 必须是一个简单对象或 URLSearchParams 对象
+  params: {
+    ID: 12345
+  },
+
+  // `paramsSerializer` 是可选方法，主要用于序列化 `params`
+  // (e.g. https://www.npmjs.com/package/qs, http://api.jquery.com/jquery.param/)
+  paramsSerializer: function (params) {
+    return Qs.stringify (params, {arrayFormat: 'brackets'})
+  },
+
+  // `data` 是作为请求体被发送的数据
+  // 仅适用 'PUT', 'POST', 'DELETE 和 'PATCH' 请求方法
+  // 在没有设置 `transformRequest` 时，则必须是以下类型之一:
+  //- string, plain object, ArrayBuffer, ArrayBufferView, URLSearchParams
+  //- 浏览器专属: FormData, File, Blob
+  //- Node 专属: Stream, Buffer
+  data: {
+    firstName: 'Fred'
+  },
+  
+  // 发送请求体数据的可选语法
+  // 请求方式 post
+  // 只有 value 会被发送，key 则不会
+  data: 'Country=Brasil&amp;City=Belo Horizonte',
+
+  // `timeout` 指定请求超时的毫秒数。
+  // 如果请求时间超过 `timeout` 的值，则请求会被中断
+  timeout: 1000, // 默认值是 `0` (永不超时)
+
+  // `withCredentials` 表示跨域请求时是否需要使用凭证
+  withCredentials: false, //default
+
+  // `adapter` 允许自定义处理请求，这使测试更加容易。
+  // 返回一个 promise 并提供一个有效的响应 （参见 lib/adapters/README.md）。
+  adapter: function (config) {
+    /* ... */
+  },
+
+  // `auth` HTTP Basic Auth
+  auth: {
+    username: 'janedoe',
+    password: 's00pers3cret'
+  },
+
+  // `responseType` 表示浏览器将要响应的数据类型
+  // 选项包括: 'arraybuffer', 'document', 'json', 'text', 'stream'
+  // 浏览器专属：'blob'
+  responseType: 'json', // 默认值
+
+  // `responseEncoding` 表示用于解码响应的编码 (Node.js 专属)
+  // 注意：忽略 `responseType` 的值为'stream'，或者是客户端请求
+  // Note: Ignored for `responseType` of'stream' or client-side requests
+  responseEncoding: 'utf8', // 默认值
+
+  // `xsrfCookieName` 是 xsrf token 的值，被用作 cookie 的名称
+  xsrfCookieName: 'XSRF-TOKEN', // 默认值
+
+  // `xsrfHeaderName` 是带有 xsrf token 值的 http 请求头名称
+  xsrfHeaderName: 'X-XSRF-TOKEN', // 默认值
+
+  // `onUploadProgress` 允许为上传处理进度事件
+  // 浏览器专属
+  onUploadProgress: function (progressEvent) {
+    // 处理原生进度事件
+  },
+
+  // `onDownloadProgress` 允许为下载处理进度事件
+  // 浏览器专属
+  onDownloadProgress: function (progressEvent) {
+    // 处理原生进度事件
+  },
+
+  // `maxContentLength` 定义了 node.js 中允许的 HTTP 响应内容的最大字节数
+  maxContentLength: 2000,
+
+  // `maxBodyLength`（仅 Node）定义允许的 http 请求内容的最大字节数
+  maxBodyLength: 2000,
+
+  // `validateStatus` 定义了对于给定的 HTTP 状态码是 resolve 还是 reject promise。
+  // 如果 `validateStatus` 返回 `true` (或者设置为 `null` 或 `undefined`)，
+  // 则 promise 将会 resolved，否则是 rejected。
+  validateStatus: function (status) {
+    return status &gt;= 200 &amp;&amp; status &lt; 300; // 默认值
+  },
+
+  // `maxRedirects` 定义了在 node.js 中要遵循的最大重定向数。
+  // 如果设置为 0，则不会进行重定向
+  maxRedirects: 5, // 默认值
+
+  // `socketPath` 定义了在 node.js 中使用的 UNIX 套接字。
+  //e.g. '/var/run/docker.sock' 发送请求到 docker 守护进程。
+  // 只能指定 `socketPath` 或 `proxy` 。
+  // 若都指定，这使用 `socketPath` 。
+  socketPath: null, //default
+
+  // `httpAgent` and `httpsAgent` define a custom agent to be used when performing http
+  //and https requests, respectively, in node.js. This allows options to be added like
+  // `keepAlive` that are not enabled by default.
+  httpAgent: new http.Agent ({ keepAlive: true }),
+  httpsAgent: new https.Agent ({ keepAlive: true }),
+
+  // `proxy` 定义了代理服务器的主机名，端口和协议。
+  // 您可以使用常规的 `http_proxy` 和 `https_proxy` 环境变量。
+  // 使用 `false` 可以禁用代理功能，同时环境变量也会被忽略。
+  // `auth` 表示应使用 HTTP Basic auth 连接到代理，并且提供凭据。
+  // 这将设置一个 `Proxy-Authorization` 请求头，它会覆盖 `headers` 中已存在的自定义 `Proxy-Authorization` 请求头。
+  // 如果代理服务器使用 HTTPS，则必须设置 protocol 为 `https`
+  proxy: {
+    protocol: 'https',
+    host: '127.0.0.1',
+    port: 9000,
+    auth: {
+      username: 'mikeymike',
+      password: 'rapunz3l'
+    }
+  },
+
+  //see https://axios-http.com/zh/docs/cancellation
+  cancelToken: new CancelToken (function (cancel) {
+  }),
+
+  // `decompress` indicates whether or not the response body should be decompressed 
+  //automatically. If set to `true` will also remove the 'content-encoding' header 
+  //from the responses objects of all decompressed responses
+  //- Node only (XHR cannot turn off decompression)
+  decompress: true // 默认值
+
+}
+</code></pre>
+<h2 id="65-拦截器"><a class="header" href="#65-拦截器">6.5. 拦截器</a></h2>
+<pre><code class="language-js">// 添加请求拦截器
+axios.interceptors.request.use (function (config) {
+    // 在发送请求之前做些什么
+    return config;
+  }, function (error) {
+    // 对请求错误做些什么
+    return Promise.reject (error);
+  });
+
+// 添加响应拦截器
+axios.interceptors.response.use (function (response) {
+    // 2xx 范围内的状态码都会触发该函数。
+    // 对响应数据做点什么
+    return response;
+  }, function (error) {
+    // 超出 2xx 范围的状态码都会触发该函数。
+    // 对响应错误做点什么
+    return Promise.reject (error);
+  });
+</code></pre>
+<h2 id="实战"><a class="header" href="#实战">实战</a></h2>
+<p>单文件写法</p>
+<pre><code class="language-js">&lt;script setup&gt;
+import axios from 'axios'
+
+const instance = axios.create ({
+  baseURL: 'http://43.139.239.29',
+  timeout: 1000,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+
+function getInfo () {
+  //const url = 'https://jsonplaceholder.typicode.com/todos/1'
+  instance.get ('/get')
+    .then (response =&gt; {
+      console.log (response.data)
+    })
+    .catch (error =&gt; {
+      console.log (error)
+    }
+    )
+}
+function getInfoWithParam () {
+  //const url = 'https://jsonplaceholder.typicode.com/todos/1'
+  instance.get ('/get', {
+    params: {
+      id: 1,
+      name: 'John'
+    }
+  })
+    .then (response =&gt; {
+      console.log (response.data)
+    })
+    .catch (error =&gt; {
+      console.log (error)
+    }
+    )
+}
+
+function postInfo () {
+  //const url = 'https://jsonplaceholder.typicode.com/todos/1'
+  instance.post ('/post')
+    .then (response =&gt; {
+      console.log (response)
+    })
+    .catch (error =&gt; {
+      console.log (error)
+    }
+    )
+}
+function postInfoWithParam () {
+  //const url = 'https://jsonplaceholder.typicode.com/todos/1'
+  instance.post ('/post', {
+    id: 1,
+    name: 'John'
+  })
+    .then (response =&gt; {
+      console.log (response)
+    })
+    .catch (error =&gt; {
+      console.log (error)
+    }
+    )
+}
+
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;button @click="getInfo ()"&gt;Get Info&lt;/button&gt;
+  &lt;button @click="getInfoWithParam ()"&gt;Get Info With Param&lt;/button&gt;
+  &lt;button @click="postInfo ()"&gt;Post Info&lt;/button&gt;
+  &lt;button @click="postInfoWithParam ()"&gt;Post Info With Param&lt;/button&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;&lt;/style&gt;
+
+</code></pre>
+<p>多文件，添加拦截器</p>
+<pre><code class="language-js">&lt;script setup&gt;
+
+import instance from './utils/http/axiosInstance';
+import { message } from 'ant-design-vue';
+function getInfo () {
+  //const url = 'https://jsonplaceholder.typicode.com/todos/1'
+  instance.get ('/get')
+    .then (response =&gt; {
+      console.log (response.data)
+    })
+    .catch (error =&gt; {
+      //console.log (error)
+    }
+    )
+}
+function getInfoWithParam () {
+  //const url = 'https://jsonplaceholder.typicode.com/todos/1'
+  instance.get ('/get', {
+    params: {
+      id: 1,
+      name: 'John'
+    }
+  })
+    .then (response =&gt; {
+      console.log (response.data)
+    })
+    .catch (error =&gt; {
+      //console.log (error)
+    }
+    )
+}
+
+function postInfo () {
+  //const url = 'https://jsonplaceholder.typicode.com/todos/1'
+  instance.post ('/post')
+    .then (response =&gt; {
+      console.log (response)
+    })
+    .catch (error =&gt; {
+      //console.log (error)
+    }
+    )
+}
+function postInfoWithParam () {
+  //const url = 'https://jsonplaceholder.typicode.com/todos/1'
+  instance.post ('/post', {
+    id: 1,
+    name: 'John'
+  })
+    .then (response =&gt; {
+      console.log (response)
+    })
+    .catch (error =&gt; {
+      //console.log (error)
+    }
+    )
+}
+
+function delay2s () {
+  instance.get ('/delay/2')
+    .then (response =&gt; {
+      console.log (response)
+    })
+    .catch (error =&gt; {
+      //console.log (error)
+      //message.error (error.message)
+    }
+  )
+}
+
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;button @click="getInfo ()"&gt;Get Info&lt;/button&gt;
+  &lt;button @click="getInfoWithParam ()"&gt;Get Info With Param&lt;/button&gt;
+  &lt;button @click="postInfo ()"&gt;Post Info&lt;/button&gt;
+  &lt;button @click="postInfoWithParam ()"&gt;Post Info With Param&lt;/button&gt;
+  &lt;button @click="delay2s ()"&gt;Delay 2s&lt;/button&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;&lt;/style&gt;
+
+</code></pre>
+<pre><code class="language-js">import axios from 'axios'
+import { message } from 'ant-design-vue';
+const instance = axios.create ({
+  baseURL: 'http://43.139.239.29',
+  timeout: 1000,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+
+// 添加请求拦截器
+instance.interceptors.request.use (function (config) {
+    // 在发送请求之前做些什么
+    return config;
+  }, function (error) {
+    // 对请求错误做些什么
+    console.log (error);
+    message.error (' 请求超时，请检查网络连接或联系管理员！');
+    return Promise.reject (error);
+  });
+
+// 添加响应拦截器
+instance.interceptors.response.use (function (response) {
+    // 2xx 范围内的状态码都会触发该函数。
+    // 对响应数据做点什么
+    return response;
+  }, function (error) {
+    // 超出 2xx 范围的状态码都会触发该函数。
+    // 对响应错误做点什么
+    console.log (error);
+    message.error (' 请求失败，请检查网络连接或联系管理员！');
+    return Promise.reject (error);
+  });
+
+export default instance
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="Vue-Router速成.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="Pinia入门.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="Vue-Router速成.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="Pinia入门.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
